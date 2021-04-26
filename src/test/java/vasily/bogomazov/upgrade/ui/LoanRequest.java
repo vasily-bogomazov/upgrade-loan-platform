@@ -53,7 +53,8 @@ public class LoanRequest extends BaseClass{
 		lnPurSelect.selectByVisibleText(loanPurposeOption);
 		logger.info("Loan Purpose selected is: "+ loanPurposeOption);
 		funnelPage.CheckYourRateBtn.click();
-			
+		assertLoansCards.assertAll();
+		
 		personal = new PersonalInfoPage(driver);
 		wait.until(ExpectedConditions.visibilityOf(personal.basicInfoPageTitle));
 		SoftAssert assertBasicInfo = new SoftAssert();
@@ -76,7 +77,7 @@ public class LoanRequest extends BaseClass{
 		personal.continueButton.click();
 			
 		wait.until(ExpectedConditions.visibilityOf(personal.borrowerIncome));
-		assertBasicInfo.assertTrue(driver.getCurrentUrl().contains("income"), "Clicking on Continue button does not land User on an Income information Page");
+		Assert.assertTrue(driver.getCurrentUrl().contains("income"), "Clicking on Continue button does not land User on an Income information Page");
 		logger.info("User is on an Income information page after clicking Continue buton");
 		personal.borrowerIncome.sendKeys(readconfig.getParameter("income"));
 		personal.borrowerAdditionalIncome.sendKeys(readconfig.getParameter("addIncome"));
@@ -85,9 +86,11 @@ public class LoanRequest extends BaseClass{
 			
 		JavascriptExecutor js = (JavascriptExecutor) driver;  
 		js.executeScript("arguments[0].click();", personal.continueButton);
-			
+		
+		assertBasicInfo.assertAll();
+		
 		wait.until(ExpectedConditions.visibilityOf(personal.emailAddressInput));
-		assertBasicInfo.assertTrue(driver.getCurrentUrl().contains("login"),"Clicking on Continue button does not land User on a Create an Account Page");
+		Assert.assertTrue(driver.getCurrentUrl().contains("login"),"Clicking on Continue button does not land User on a Create an Account Page");
 		logger.info("User is on a Create an Account Page after clicking on Continue button");
 						
 		String email ="candidate" +getRandomNumber(3) + "@upgrade-challenge.com";
@@ -119,7 +122,9 @@ public class LoanRequest extends BaseClass{
 		String expectedofferInfoPageTitle = "Affordable Online Personal Loans | Upgrade";
 		assertOfferInfo.assertEquals(offerInfoPageTitle, expectedofferInfoPageTitle, "Clicking on Check Your Rate button doesnot land User on a Offer information Page");
 		logger.info("User is on a Offer information page after clicking on Check Your Rate button"); 
-			
+		
+		assertOfferInfo.assertAll();
+		
 		LoanOfferDTO expectedLoanOffer = new LoanOfferDTO();
 		expectedLoanOffer.setApprovedLoanAmount(offerPage.approvedLoanAmount.getText());
 		expectedLoanOffer.setMonthlyPayment(offerPage.monthlyPayment.getText());
@@ -135,7 +140,7 @@ public class LoanRequest extends BaseClass{
 		offerPage.signOutButton.click();
 			
 		wait.until(ExpectedConditions.visibilityOf(offerPage.logoutPageHeader));
-		assertOfferInfo.assertTrue(driver.getCurrentUrl().contains("logout"),  "User is not logged out after clicking Sign Out");
+		Assert.assertTrue(driver.getCurrentUrl().contains("logout"),  "User is not logged out after clicking Sign Out");
 		logger.info("User is successfully logged out after clicking Sign Out"); 
 						
 		driver.get(readconfig.getParameter("loginURL"));
@@ -145,7 +150,7 @@ public class LoanRequest extends BaseClass{
 		personal.passwordInput.sendKeys(password);
 		personal.signInButton.click();
 		wait.until(ExpectedConditions.visibilityOf(offerPage.youQualifyForDiscountHeader));
-		assertOfferInfo.assertTrue(driver.getCurrentUrl().contains("offer-page"),  "Signing In with User Email and Password doesnot land User on an Offer Page");
+		Assert.assertTrue(driver.getCurrentUrl().contains("offer-page"),  "Signing In with User Email and Password doesnot land User on an Offer Page");
 		logger.info("Signing In with User Email " + email + " and Password " + password+ " lands User on an Offer Page"); 
 			
 		SoftAssert assertLoanOffer = new SoftAssert();		
@@ -155,9 +160,6 @@ public class LoanRequest extends BaseClass{
 		assertLoanOffer.assertEquals(expectedLoanOffer.getInterestRate(), offerPage.interestRate.getText(), "Interest Rate values from Loan Request and Loan Offer do not match");
 		assertLoanOffer.assertEquals(expectedLoanOffer.getApr(), offerPage.apr.getText(), "APR values from Loan Request and Loan Offer do not match");
 		
-		assertLoansCards.assertAll();
-		assertBasicInfo.assertAll();
-		assertOfferInfo.assertAll();
 		assertLoanOffer.assertAll();
 	}
 	
