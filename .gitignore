@@ -1,3 +1,7 @@
-/src/
+
 /target/
 /test-output/
+/Drivers/
+.classpath
+.project
+.settings/
