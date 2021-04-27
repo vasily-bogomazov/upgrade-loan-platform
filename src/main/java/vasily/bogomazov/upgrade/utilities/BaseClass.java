@@ -20,6 +20,7 @@ import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import io.restassured.path.json.JsonPath;
 
 public class BaseClass {
 	
@@ -116,6 +117,11 @@ public class BaseClass {
 			sb.append(characters.charAt(index));
 		}
 		return sb.toString();
+	}
+	
+	public static JsonPath rawToJson (String response) {
+		JsonPath js = new JsonPath(response);
+		return js;
 	}
 	
 }
