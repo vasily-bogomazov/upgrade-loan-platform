@@ -33,34 +33,24 @@ public class LoanRequest extends BaseClass{
 	public void setup() throws IOException, InterruptedException {
 		init(readconfig.getParameter("browser"));
 		logger = Logger.getLogger(LoanRequest.class);
-		funnelPage = new FunnelPage(driver);
 		wait = new WebDriverWait(driver, 20);
 	}
  
 	@Test
 	public void verifyLoanCanBeRequested() throws InterruptedException {
-	
-		wait.until(ExpectedConditions.visibilityOf(funnelPage.GetStartedHereTitle));
-		SoftAssert assertLoansCards = new SoftAssert();
-		String loansCardsPageTitle = driver.getTitle();
-		String expectedLoansCardsPageTitle = "Upgrade - Personal Loans and Cards";
-		assertLoansCards.assertEquals(loansCardsPageTitle,expectedLoansCardsPageTitle , "User is not landed on a Personal Loans and Cards Page");
+		//init page
+		funnelPage = new FunnelPage(driver);
 		logger.info("User Lands on a Personal Loans and Cards page");
-		funnelPage.LoanAmountInputBox.sendKeys(readconfig.getParameter("amount"));
+		
+		funnelPage.loanAmountInputBox.sendKeys(readconfig.getParameter("amount"));
 		logger.info("Loan Amount entered is: " + readconfig.getParameter("amount")); 
-		Select lnPurSelect = new Select (funnelPage.LoanPurposeDropbox);
 		String loanPurposeOption = "Pay off Credit Cards";
-		lnPurSelect.selectByVisibleText(loanPurposeOption);
+		new Select (funnelPage.loanPurposeDropbox).selectByVisibleText(loanPurposeOption);
+		
 		logger.info("Loan Purpose selected is: "+ loanPurposeOption);
-		funnelPage.CheckYourRateBtn.click();
-		assertLoansCards.assertAll();
+		funnelPage.checkYourRateBtn.click();
 		
 		personal = new PersonalInfoPage(driver);
-		wait.until(ExpectedConditions.visibilityOf(personal.basicInfoPageTitle));
-		SoftAssert assertBasicInfo = new SoftAssert();
-		String basicInfoPageTitle = driver.getTitle();
-		String expectedbasicInfoPageTitle = "Check your rate for a personal loan | Upgrade";
-		assertBasicInfo.assertEquals(basicInfoPageTitle, expectedbasicInfoPageTitle, "Clicking on Check Your Rate button does not land User on a Basic information page ");
 		logger.info("User is on a Basic information page after clicking Check Your Rate button"); 
 					
 		personal.borrowerFirstName.sendKeys(readconfig.getParameter("firstName"));
@@ -87,8 +77,6 @@ public class LoanRequest extends BaseClass{
 		JavascriptExecutor js = (JavascriptExecutor) driver;  
 		js.executeScript("arguments[0].click();", personal.continueButton);
 		
-		assertBasicInfo.assertAll();
-		
 		wait.until(ExpectedConditions.visibilityOf(personal.emailAddressInput));
 		Assert.assertTrue(driver.getCurrentUrl().contains("login"),"Clicking on Continue button does not land User on a Create an Account Page");
 		logger.info("User is on a Create an Account Page after clicking on Continue button");
@@ -113,17 +101,10 @@ public class LoanRequest extends BaseClass{
 		logger.info("Entered User's password: " + password);
 			
 		personal.agreementCheckBox.click();
-		js.executeScript("arguments[0].click();", funnelPage.CheckYourRateBtn);
+		js.executeScript("arguments[0].click();", funnelPage.checkYourRateBtn);
 			
 		offerPage = new OfferPage(driver);
-		wait.until(ExpectedConditions.visibilityOf(offerPage.youQualifyForDiscountHeader));
-		SoftAssert assertOfferInfo = new SoftAssert();
-		String offerInfoPageTitle = driver.getTitle();
-		String expectedofferInfoPageTitle = "Affordable Online Personal Loans | Upgrade";
-		assertOfferInfo.assertEquals(offerInfoPageTitle, expectedofferInfoPageTitle, "Clicking on Check Your Rate button doesnot land User on a Offer information Page");
 		logger.info("User is on a Offer information page after clicking on Check Your Rate button"); 
-		
-		assertOfferInfo.assertAll();
 		
 		LoanOfferDTO expectedLoanOffer = new LoanOfferDTO();
 		expectedLoanOffer.setApprovedLoanAmount(offerPage.approvedLoanAmount.getText());
@@ -144,13 +125,13 @@ public class LoanRequest extends BaseClass{
 		logger.info("User is successfully logged out after clicking Sign Out"); 
 						
 		driver.get(readconfig.getParameter("loginURL"));
-		wait.until(ExpectedConditions.visibilityOf(personal.signInButton));
+		wait.until(ExpectedConditions.visibilityOfAllElements(personal.signInButton, personal.emailAddressInput, personal.passwordInput, personal.signInButton));
 					
 		personal.emailAddressInput.sendKeys(email);
 		personal.passwordInput.sendKeys(password);
 		personal.signInButton.click();
-		wait.until(ExpectedConditions.visibilityOf(offerPage.youQualifyForDiscountHeader));
-		Assert.assertTrue(driver.getCurrentUrl().contains("offer-page"),  "Signing In with User Email and Password doesnot land User on an Offer Page");
+		
+		offerPage = new OfferPage(driver);
 		logger.info("Signing In with User Email " + email + " and Password " + password+ " lands User on an Offer Page"); 
 			
 		SoftAssert assertLoanOffer = new SoftAssert();		
@@ -163,8 +144,6 @@ public class LoanRequest extends BaseClass{
 		assertLoanOffer.assertAll();
 	}
 	
-	
-	
 	@AfterMethod
 	public void tearDown(ITestResult result) {
 		if (result.getStatus() == ITestResult.FAILURE) {
@@ -174,6 +153,6 @@ public class LoanRequest extends BaseClass{
 			logger.info("Test is Passed");
 			
 		}
-		driver.quit();;
+		driver.quit();
 	}
 }

@@ -4,8 +4,9 @@
 
 	<test name="Loan TestCases"> 
 		<classes>
-			<class name="vasily.bogomazov.upgrade.ui.LoanRequest">
-			</class>
+			<class name="vasily.bogomazov.upgrade.ui.LoanRequest"></class>
+			<!-- <class name="vasily.bogomazov.upgrade.api.Authorization"></class> -->
+			
 		</classes>	
 	</test>
 </suite> 
