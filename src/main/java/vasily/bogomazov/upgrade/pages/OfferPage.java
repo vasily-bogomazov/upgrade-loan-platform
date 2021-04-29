@@ -22,11 +22,11 @@ public class OfferPage {
 	@FindBy (xpath="//div[@class='col-xs-12 col-sm-8 col-md-6']/h2")
 	public WebElement youQualifyForDiscountHeader;
 	
-	@FindBy (xpath="//span[@class='sc-dmlrTW guKkvw']")
+	@FindBy (xpath="//span[@data-auto='userLoanAmount']")
 	public WebElement approvedLoanAmount;
 	
 	//@FindBy (xpath="//div[@class='sc-bTRMAZ kmeEIc']")
-	@FindBy (xpath="//div[@class='sc-kUbhmq gIXPbp']/span") //new locator, changed on 04/26/2021
+	@FindBy (xpath="//span[@data-auto='defaultMonthlyPayment']") //new locator, changed on 04/26/2021
 	public WebElement monthlyPayment;
 	
 	//@FindBy (xpath="//li[@data-auto='defaultLoanTerm']/div[@class='sc-bTRMAZ eILGho']")

@@ -1,46 +1,43 @@
 package vasily.bogomazov.upgrade.api;
 
-import org.hamcrest.beans.HasProperty;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.sun.xml.bind.v2.schemagen.xmlschema.List;
-
-import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.http.ContentType;
 
 import vasily.bogomazov.upgrade.DTO.CredentialsBody;
 import vasily.bogomazov.upgrade.DTO.LoanResponse;
+import vasily.bogomazov.upgrade.DTO.LoansInReviewDTO;
+import vasily.bogomazov.upgrade.utilities.ReadConfig;
 
+import static vasily.bogomazov.upgrade.utilities.RestUtilities.generateRequestSpec;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-import java.util.UUID;
+import java.util.List;
 
 public class Authorization {
+	public static ReadConfig readconfig = new ReadConfig("./Configuration/API.properties"); 
 	
 	
 	@Test (priority=1)
 	public void restAssuredAuthorizationValidCredentials()  {
-		RestAssured.config();
-		RestAssured.baseURI = "https://credapi.credify.tech";
 		
 		CredentialsBody credentials = new CredentialsBody();
-		credentials.setUsername("coding.challenge.login@upgrade.com");
-		credentials.setPassword("On$3XcgsW#9q");
-		credentials.setRecaptchaToken("coding-challenge");
+		credentials.setUsername(readconfig.getParameter("api.username"));
+		credentials.setPassword(readconfig.getParameter("api.password"));
+		credentials.setRecaptchaToken(readconfig.getParameter("api.recaptcha"));
 		LoanResponse response = given()
-				.contentType(ContentType.JSON)
-				.header("x-cf-source-id", "coding-challenge")
-				.header("x-cf-corr-id", UUID.randomUUID())
+				.spec(generateRequestSpec(readconfig))
 				.body(credentials)
 				.log().all()
 				
-				.when().post("api/brportorch/v2/login")
+				.when().post(readconfig.getParameter("api.uri.login"))
 				
 				.then().log().all()
 				.assertThat().statusCode(200)
+		// 1st solution
 				.spec(
 						new ResponseSpecBuilder()
 						.expectContentType(ContentType.JSON)
@@ -48,32 +45,31 @@ public class Authorization {
 						.expectBody("loansInReview", everyItem(hasEntry("productType","PERSONAL_LOAN")))
 						.build()
 				)
-				
 				.extract().response().as(LoanResponse.class);
+		//2nd solution
+		for (LoansInReviewDTO loan : response.getLoansInReview()) {
+			Assert.assertEquals(loan.getProductType(), "PERSONAL_LOAN", "productType is not matching");
+		}	
 		
-		
-	//	Assert.assertEquals(response.getLoansInReview(), "PERSONAL_LOAN");
-		
-	
 	}
 
 	
-	//@Test(priority=2)
+	@Test(priority=2)
 	public void restAssuredAuthorizationInvalidCredentials() {
-		RestAssured.config();
-		RestAssured.baseURI = "https://credapi.credify.tech";
+		
+		CredentialsBody credentials = new CredentialsBody();
+		credentials.setUsername(readconfig.getParameter("api.invalid-username"));
+		credentials.setPassword(readconfig.getParameter("api.password"));
+		credentials.setRecaptchaToken(readconfig.getParameter("api.recaptcha"));
 		String response = given()
-				.contentType(ContentType.JSON)
-				.header("x-cf-source-id", "coding-challenge")
-				.header("x-cf-corr-id", UUID.randomUUID())
-				.body(Payload.loginCredentials("candidateInvalid999@upgrade-challenge.com","JfyoG008"))
+				.spec(generateRequestSpec(readconfig))
+				.body(credentials)
 				
-				.when().post("api/brportorch/v2/login")
+				.when().post(readconfig.getParameter("api.uri.login"))
 				
 				.then().log().all()
 				.assertThat().statusCode(401)
 				.extract().response().asString();
-	
 	}
 	
 }

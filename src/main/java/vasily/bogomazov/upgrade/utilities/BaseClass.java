@@ -20,17 +20,16 @@ import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import io.restassured.path.json.JsonPath;
 
 public class BaseClass {
 	
 	public static WebDriver driver= null;
-	public static ReadConfig readconfig = new ReadConfig(); 
+	public static ReadConfig readconfig = new ReadConfig("./Configuration/config.properties"); 
 	public String baseURL = readconfig.getParameter("URL"); 
 	public static Logger logger;
 	
 
-	public void init(String application) throws IOException {
+	public void init() throws IOException {
 
 
 		PropertyConfigurator.configure("log4j.properties");
@@ -54,8 +53,7 @@ public class BaseClass {
 					} else if (browserName.equals("ie")) {
 						DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();
 						capabilities.setCapability(CapabilityType.BROWSER_NAME, "IE");
-						capabilities.setCapability(
-								InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
+						capabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
 						WebDriverManager.iedriver().cachePath(System.getProperty("user.dir") + "//Drivers//").setup();
 						driver = new InternetExplorerDriver();
 						driver.manage().deleteAllCookies();
@@ -118,10 +116,5 @@ public class BaseClass {
 		}
 		return sb.toString();
 	}
-	
-	public static JsonPath rawToJson (String response) {
-		JsonPath js = new JsonPath(response);
-		return js;
-	}
-	
+
 }

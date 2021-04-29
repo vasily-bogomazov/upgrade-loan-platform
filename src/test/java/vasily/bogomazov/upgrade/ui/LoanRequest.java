@@ -31,7 +31,7 @@ public class LoanRequest extends BaseClass{
 	
 	@BeforeMethod
 	public void setup() throws IOException, InterruptedException {
-		init(readconfig.getParameter("browser"));
+		init();
 		logger = Logger.getLogger(LoanRequest.class);
 		wait = new WebDriverWait(driver, 20);
 	}
