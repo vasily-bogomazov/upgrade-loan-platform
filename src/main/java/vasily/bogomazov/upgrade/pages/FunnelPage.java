@@ -24,10 +24,10 @@ public class FunnelPage {
 	@FindBy(name = "desiredAmount")
 	public WebElement loanAmountInputBox;
 	
-	@FindBy (xpath="//*[@class='sc-khAkjo kniQaM sc-nFpLZ gijkwK']") // (xpath="//select[@data-auto='dropLoanPurpose']")
+	@FindBy (css="select[data-auto='dropLoanPurpose']")
 	public WebElement loanPurposeDropbox;
 	
-	@FindBy (xpath="//button[@type='submit' or @class='sc-jcVebW eYlwys section']")  // (xpath="//button[@data-auto='CheckYourRate']")
+	@FindBy (xpath="//button[@type='submit' or @class='sc-jcVebW eYlwys section']")
 	public WebElement checkYourRateBtn;
 	
 }

@@ -6,16 +6,17 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
+import org.testng.asserts.SoftAssert;
 
 public class OfferPage {
-
+		
 	public OfferPage(WebDriver driver) {
 		PageFactory.initElements(driver, this);
+		SoftAssert softAssert = new SoftAssert();
 		new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOf(youQualifyForDiscountHeader));
 		String expectedofferInfoPageTitle = "Affordable Online Personal Loans | Upgrade";
-		Assert.assertEquals(driver.getTitle(), expectedofferInfoPageTitle, "Personal Loan offer page title is mismatched");
-		Assert.assertTrue(driver.getCurrentUrl().contains("offer-page"), "Personal Loan offer page URL is mismatched");
+		softAssert.assertEquals(driver.getTitle(), expectedofferInfoPageTitle, "Personal Loan offer page title is mismatched");
+		softAssert.assertTrue(driver.getCurrentUrl().contains("offer-page"), "Personal Loan offer page URL is mismatched");
 		
 	}
 	
@@ -25,20 +26,16 @@ public class OfferPage {
 	@FindBy (xpath="//span[@data-auto='userLoanAmount']")
 	public WebElement approvedLoanAmount;
 	
-	//@FindBy (xpath="//div[@class='sc-bTRMAZ kmeEIc']")
-	@FindBy (xpath="//span[@data-auto='defaultMonthlyPayment']") //new locator, changed on 04/26/2021
+	@FindBy (css="[data-auto='defaultMonthlyPayment']")
 	public WebElement monthlyPayment;
 	
-	//@FindBy (xpath="//li[@data-auto='defaultLoanTerm']/div[@class='sc-bTRMAZ eILGho']")
-	@FindBy (xpath="//div[@data-auto='defaultLoanTerm']") //new locator, changed on 04/26/2021
+	@FindBy (xpath="//div[@data-auto='defaultLoanTerm']")
 	public WebElement term;
 	
-	//@FindBy (xpath="//li[@data-auto='defaultLoanInterestRate']/div[@class='sc-bTRMAZ eILGho']")
-	@FindBy (xpath="//div[@data-auto='defaultLoanInterestRate']") //new locator, changed on 04/26/2021
+	@FindBy (xpath="//div[@data-auto='defaultLoanInterestRate']")
 	public WebElement interestRate;
 	
-	//@FindBy (xpath="//div[@data-auto='defaultAPR']")
-	@FindBy (xpath="//div[@data-auto='defaultMoreInfoAPR']/div") //new locator, changed on 04/26/2021
+	@FindBy (xpath="//div[@data-auto='defaultMoreInfoAPR']/div")
 	public WebElement apr;
 
 	@FindBy (className="header-nav")

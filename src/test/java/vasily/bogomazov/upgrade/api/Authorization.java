@@ -5,7 +5,7 @@ import org.testng.annotations.Test;
 
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.http.ContentType;
-
+import io.restassured.path.json.JsonPath;
 import vasily.bogomazov.upgrade.DTO.CredentialsBody;
 import vasily.bogomazov.upgrade.DTO.LoanResponse;
 import vasily.bogomazov.upgrade.DTO.LoansInReviewDTO;
@@ -21,7 +21,7 @@ public class Authorization {
 	public static ReadConfig readconfig = new ReadConfig("./Configuration/API.properties"); 
 	
 	
-	@Test (priority=1)
+//	@Test (priority=1)
 	public void restAssuredAuthorizationValidCredentials()  {
 		
 		CredentialsBody credentials = new CredentialsBody();
@@ -51,6 +51,10 @@ public class Authorization {
 			Assert.assertEquals(loan.getProductType(), "PERSONAL_LOAN", "productType is not matching");
 		}	
 		
+		
+		
+		
+		
 	}
 
 	
@@ -70,6 +74,10 @@ public class Authorization {
 				.then().log().all()
 				.assertThat().statusCode(401)
 				.extract().response().asString();
+		
+		String str = new JsonPath(response).getString("codeName").toString();
+		System.out.println(str);
+	
 	}
 	
 }
